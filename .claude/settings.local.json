@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(npm run:*)",
+      "WebFetch(domain:lucidmotors.com)",
+      "Bash(sed:*)",
+      "WebFetch(domain:evebatteryglobal.en.alibaba.com)",
+      "WebFetch(domain:www.alibaba.com)",
+      "WebFetch(domain:en.eve.com)",
+      "WebFetch(domain:www.evlithium.com)",
+      "WebFetch(domain:batteryhookup.com)",
+      "WebSearch",
+      "WebFetch(domain:www.evebatteryusa.com)",
+      "WebFetch(domain:www.evemall.eu)",
+      "WebFetch(domain:www.18650batterystore.com)",
+      "Bash(cp \"C:/Users/micha/Desktop/RECURSOS TECNOLOGICOS/CONTENIDO PARA REDES/LOGO RT.png\" \"C:/Users/micha/Desktop/rt-web/public/logo-dark.png\")",
+      "Bash(cp \"C:/Users/micha/Desktop/RECURSOS TECNOLOGICOS/CONTENIDO PARA REDES/logo empresa.jpeg\" \"C:/Users/micha/Desktop/rt-web/public/logo-light.jpeg\")",
+      "Bash(cp \"C:/Users/micha/Desktop/RECURSOS TECNOLOGICOS/CONTENIDO PARA REDES/logo_ok1.jpg\" \"C:/Users/micha/Desktop/rt-web/public/logo-bw.jpg\")",
+      "Bash(npm i:*)"
+    ]
+  }
+}
