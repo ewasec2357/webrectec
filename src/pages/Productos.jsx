@@ -2,17 +2,37 @@ import { useState } from "react";
 import { PRODUCTS, wm } from "../constants.js";
 import { WaIcon } from "../components/Icons.jsx";
 
-/* ── Vista de detalle de un producto ── */
+/* ── Carrusel de imágenes ── */
+function Carousel({ images, badge }) {
+  const [idx, setIdx] = useState(0);
+  const prev = () => setIdx(i => (i - 1 + images.length) % images.length);
+  const next = () => setIdx(i => (i + 1) % images.length);
+  return (
+    <div className="carousel">
+      <img src={images[idx]} alt="" />
+      <span className="prod-badge">{badge}</span>
+      <button className="car-btn car-prev" onClick={prev}>‹</button>
+      <button className="car-btn car-next" onClick={next}>›</button>
+      <div className="car-dots">
+        {images.map((_, i) => (
+          <button key={i} className={`car-dot${i === idx ? " active" : ""}`} onClick={() => setIdx(i)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Página de detalle: UN solo producto ── */
 function ProductDetail({ item, onBack }) {
   return (
     <div className="prod-detail fade">
-      <button className="prod-back" onClick={onBack}>
-        ← Volver a productos
-      </button>
+      <button className="prod-back" onClick={onBack}>← Volver a productos</button>
       <div className="prod-detail-inner">
         <div className="prod-detail-img">
-          <img src={item.imgL} alt={item.name} />
-          <span className="prod-badge">{item.badge}</span>
+          {item.images
+            ? <Carousel images={item.images} badge={item.badge} />
+            : <><img src={item.imgL} alt={item.name} /><span className="prod-badge">{item.badge}</span></>
+          }
         </div>
         <div className="prod-detail-body">
           <h2 className="prod-name">{item.name}</h2>
@@ -27,12 +47,7 @@ function ProductDetail({ item, onBack }) {
               </div>
             ))}
           </div>
-          <a
-            href={wm(item.waMsg)}
-            className="prod-cta"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href={wm(item.waMsg)} className="prod-cta" target="_blank" rel="noreferrer">
             <WaIcon size={16} /> Cotizar por WhatsApp
           </a>
         </div>
@@ -41,7 +56,7 @@ function ProductDetail({ item, onBack }) {
   );
 }
 
-/* ── Card de producto en la cuadrícula ── */
+/* ── Thumb del catálogo ── */
 function ProductThumb({ item, onClick }) {
   return (
     <div className="prod-thumb" onClick={onClick}>
@@ -58,27 +73,25 @@ function ProductThumb({ item, onClick }) {
   );
 }
 
+/* ── Página principal de Productos ── */
 export default function Productos() {
   const [selected, setSelected] = useState(null);
 
-  /* Si llega un anchor desde el mega-menu, pre-seleccionar */
-  const allItems = PRODUCTS.flatMap(c => c.items);
-
-  if (selected) {
-    return (
-      <ProductDetail
-        item={selected}
-        onBack={() => {
-          setSelected(null);
-          window.scrollTo({ top: 0, behavior: "instant" });
-        }}
-      />
-    );
+  function open(item) {
+    setSelected(item);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+  function back() {
+    setSelected(null);
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 
+  /* Vista de producto individual */
+  if (selected) return <ProductDetail item={selected} onBack={back} />;
+
+  /* Vista de catálogo */
   return (
     <div>
-      {/* HERO */}
       <div className="page-hero" style={{ marginBottom: 48 }}>
         <div className="ph-inner">
           <div className="ph-label">Catálogo de Productos</div>
@@ -91,17 +104,15 @@ export default function Productos() {
             href={wm("Hola, quiero ver el catálogo de productos")}
             className="btn-primary"
             style={{ display: "inline-flex", textDecoration: "none" }}
-            target="_blank"
-            rel="noreferrer"
+            target="_blank" rel="noreferrer"
           >
             <WaIcon /> Solicitar catálogo completo
           </a>
         </div>
       </div>
 
-      {/* CATEGORÍAS con grid de thumbs */}
       {PRODUCTS.map(cat => (
-        <section key={cat.id} id={`prod-${cat.id}`} style={{ marginBottom: 56 }}>
+        <section key={cat.id} id={`prod-${cat.id}`} style={{ marginBottom: 48 }}>
           <div className="prod-cat-hdr">
             <div className="sec-label">{cat.icon} {cat.label}</div>
             <h2 className="sec-h2">{cat.label}</h2>
@@ -109,14 +120,7 @@ export default function Productos() {
           </div>
           <div className="prod-thumb-grid">
             {cat.items.map(item => (
-              <ProductThumb
-                key={item.id}
-                item={item}
-                onClick={() => {
-                  setSelected(item);
-                  window.scrollTo({ top: 0, behavior: "instant" });
-                }}
-              />
+              <ProductThumb key={item.id} item={item} onClick={() => open(item)} />
             ))}
           </div>
         </section>

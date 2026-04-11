@@ -63,19 +63,6 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen }) {
                   <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
               </button>
-
-              {megaOpen && (
-                <div
-                  className="mega-panel-wrap"
-                  onMouseEnter={openMega}
-                  onMouseLeave={closeMega}
-                >
-                  <MegaMenu
-                    setTab={setTab}
-                    onClose={() => setMegaOpen(false)}
-                  />
-                </div>
-              )}
             </div>
           ) : (
             <button
@@ -104,6 +91,20 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen }) {
           <span /><span /><span />
         </button>
       </div>
+
+      {/* Mega panel — fuera del nav-wrap para no afectar el flex layout */}
+      {megaOpen && (
+        <div
+          className="mega-panel-wrap"
+          onMouseEnter={openMega}
+          onMouseLeave={closeMega}
+        >
+          <MegaMenu
+            setTab={setTab}
+            onClose={() => setMegaOpen(false)}
+          />
+        </div>
+      )}
     </nav>
   );
 }
