@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { PRODUCTS } from "../constants.js";
+import { useState, useEffect } from "react";
 
-export default function MegaMenu({ setTab, onClose }) {
-  const [activeId, setActiveId] = useState(PRODUCTS[0].id);
-  const active = PRODUCTS.find(p => p.id === activeId);
+export default function MegaMenu({ data, setTab, tabId, onClose, onResetProduct }) {
+  const [activeId, setActiveId] = useState(data[0].id);
+  useEffect(() => { setActiveId(data[0].id); }, [data]);
+  const active = data.find(p => p.id === activeId) ?? data[0];
 
   function go(id) {
-    setTab("productos");
+    if (onResetProduct) onResetProduct();
+    setTab(tabId);
     onClose();
-    // Scroll al anchor después de que React re-renderice
     setTimeout(() => {
       const el = document.getElementById(`prod-${id}`);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 80);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 150);
   }
 
   return (
@@ -21,7 +21,7 @@ export default function MegaMenu({ setTab, onClose }) {
         {/* ── Columna izquierda: categorías ── */}
         <div className="mega-cats">
           <div className="mega-cats-label">Categorías</div>
-          {PRODUCTS.map(cat => (
+          {data.map(cat => (
             <button
               key={cat.id}
               className={`mega-cat-btn ${cat.id === activeId ? "active" : ""}`}

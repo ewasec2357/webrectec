@@ -1,44 +1,22 @@
 import { useState } from "react";
-import { PRODUCTS, wm } from "../constants.js";
+import { SERVICES, wm } from "../constants.js";
 import { WaIcon } from "../components/Icons.jsx";
 
-/* ── Carrusel de imágenes ── */
-function Carousel({ images, badge }) {
-  const [idx, setIdx] = useState(0);
-  const prev = () => setIdx(i => (i - 1 + images.length) % images.length);
-  const next = () => setIdx(i => (i + 1) % images.length);
-  return (
-    <div className="carousel">
-      <img src={images[idx]} alt="" />
-      <span className="prod-badge">{badge}</span>
-      <button className="car-btn car-prev" onClick={prev}>‹</button>
-      <button className="car-btn car-next" onClick={next}>›</button>
-      <div className="car-dots">
-        {images.map((_, i) => (
-          <button key={i} className={`car-dot${i === idx ? " active" : ""}`} onClick={() => setIdx(i)} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── Página de detalle: UN solo producto ── */
-function ProductDetail({ item }) {
+/* ── Detalle de servicio individual ── */
+function ServiceDetail({ item }) {
   return (
     <div className="prod-detail fade">
       <div className="prod-detail-inner">
         <div className="prod-detail-img">
-          {item.images
-            ? <Carousel images={item.images} badge={item.badge} />
-            : <><img src={item.imgL} alt={item.name} /><span className="prod-badge">{item.badge}</span></>
-          }
+          <img src={item.imgL} alt={item.name} />
+          <span className="prod-badge">{item.badge}</span>
         </div>
         <div className="prod-detail-body">
           <h2 className="prod-name">{item.name}</h2>
           <p className="prod-tagline">{item.tagline}</p>
           <p className="prod-desc">{item.desc}</p>
           <div className="prod-specs">
-            <div className="prod-specs-title">Especificaciones técnicas</div>
+            <div className="prod-specs-title">Detalle del servicio</div>
             {item.specs.map(([k, v]) => (
               <div className="prod-spec-row" key={k}>
                 <span className="prod-spec-k">{k}</span>
@@ -47,7 +25,7 @@ function ProductDetail({ item }) {
             ))}
           </div>
           <a href={wm(item.waMsg)} className="prod-cta" target="_blank" rel="noreferrer">
-            <WaIcon size={16} /> Cotizar por WhatsApp
+            <WaIcon size={16} /> Consultar por WhatsApp
           </a>
         </div>
       </div>
@@ -56,7 +34,7 @@ function ProductDetail({ item }) {
 }
 
 /* ── Thumb del catálogo ── */
-function ProductThumb({ item, onClick }) {
+function ServiceThumb({ item, onClick }) {
   return (
     <div id={`prod-${item.id}`} className="prod-thumb" onClick={onClick}>
       <div className="prod-thumb-img">
@@ -72,39 +50,37 @@ function ProductThumb({ item, onClick }) {
   );
 }
 
-/* ── Página principal de Productos ── */
-export default function Productos({ selected, setSelected }) {
+/* ── Página principal de Servicios ── */
+export default function Servicios({ selected, setSelected }) {
   function open(item) {
     setSelected(item);
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
-  /* Vista de producto individual */
-  if (selected) return <ProductDetail item={selected} />;
+  if (selected) return <ServiceDetail item={selected} />;
 
-  /* Vista de catálogo */
   return (
     <div>
       <div className="page-hero" style={{ marginBottom: 48 }}>
         <div className="ph-inner">
-          <div className="ph-label">Catálogo de Productos</div>
-          <h2>Tecnología de <em>Alta Ingeniería</em></h2>
+          <div className="ph-label">Nuestros Servicios</div>
+          <h2>Soluciones <em>Técnicas Especializadas</em></h2>
           <p>
-            Baterías de litio, sistemas de energía solar y vehículos eléctricos.
-            Todos nuestros productos incluyen certificado técnico y garantía firmada por ingeniero responsable.
+            Fabricamos baterías a medida y reparamos packs dañados con celdas Grado A
+            y certificado técnico firmado por ingeniero responsable.
           </p>
           <a
-            href={wm("Hola, quiero ver el catálogo de productos")}
+            href={wm("Hola, quiero información sobre sus servicios")}
             className="btn-primary"
             style={{ display: "inline-flex", textDecoration: "none" }}
             target="_blank" rel="noreferrer"
           >
-            <WaIcon /> Solicitar catálogo completo
+            <WaIcon /> Consultar por WhatsApp
           </a>
         </div>
       </div>
 
-      {PRODUCTS.map(cat => (
+      {SERVICES.map(cat => (
         <section key={cat.id} id={`prod-${cat.id}`} style={{ marginBottom: 48 }}>
           <div className="prod-cat-hdr">
             <div className="sec-label">{cat.icon} {cat.label}</div>
@@ -113,7 +89,7 @@ export default function Productos({ selected, setSelected }) {
           </div>
           <div className="prod-thumb-grid">
             {cat.items.map(item => (
-              <ProductThumb key={item.id} item={item} onClick={() => open(item)} />
+              <ServiceThumb key={item.id} item={item} onClick={() => open(item)} />
             ))}
           </div>
         </section>

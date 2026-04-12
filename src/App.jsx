@@ -1,20 +1,23 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import "./styles.css";
-import { TABS, wm, COMPANY } from "./constants.js";
+import { TABS, PRODUCTS, SERVICES, wm, COMPANY } from "./constants.js";
 import { WaIcon, CompanyLogo } from "./components/Icons.jsx";
 import Splash      from "./components/Splash.jsx";
 import MegaMenu    from "./components/MegaMenu.jsx";
 import MobileMenu  from "./components/MobileMenu.jsx";
 import Inicio    from "./pages/Inicio.jsx";
 import Productos from "./pages/Productos.jsx";
+import Servicios from "./pages/Servicios.jsx";
 import Asesoria  from "./pages/Asesoria.jsx";
 import Nosotros  from "./pages/Nosotros.jsx";
 import Contacto  from "./pages/Contacto.jsx";
 
 const CY = new Date().getFullYear();
 
-function Nav({ tab, setTab, menuOpen, setMenuOpen }) {
-  const [megaOpen, setMegaOpen] = useState(false);
+const MEGA_DATA = { productos: PRODUCTS, servicios: SERVICES };
+
+function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct }) {
+  const [megaOpen, setMegaOpen] = useState(null); // null | "productos" | "servicios"
   const [scrolled, setScrolled] = useState(false);
   const navRef = useRef(null);
   const closeTimer = useRef(null);
@@ -25,12 +28,12 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  function openMega()  {
+  function openMega(id)  {
     clearTimeout(closeTimer.current);
-    setMegaOpen(true);
+    setMegaOpen(id);
   }
   function closeMega() {
-    closeTimer.current = setTimeout(() => setMegaOpen(false), 120);
+    closeTimer.current = setTimeout(() => setMegaOpen(null), 120);
   }
 
   return (
@@ -51,12 +54,12 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen }) {
             <div
               key={t.id}
               className="mega-trigger"
-              onMouseEnter={openMega}
+              onMouseEnter={() => openMega(t.id)}
               onMouseLeave={closeMega}
             >
               <button
-                className={`tab-link ${tab === t.id ? "active" : ""} ${megaOpen ? "mega-open" : ""}`}
-                onClick={() => { setTab(t.id); setMegaOpen(false); }}
+                className={`tab-link ${tab === t.id ? "active" : ""} ${megaOpen === t.id ? "mega-open" : ""}`}
+                onClick={() => { setTab(t.id); setMegaOpen(null); }}
               >
                 {t.label}
                 <svg className="mega-arrow" viewBox="0 0 10 6" width="10" height="10" fill="none">
@@ -68,7 +71,7 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen }) {
             <button
               key={t.id}
               className={`tab-link ${tab === t.id ? "active" : ""}`}
-              onClick={() => { setTab(t.id); setMegaOpen(false); }}
+              onClick={() => { setTab(t.id); setMegaOpen(null); }}
             >
               {t.label}
             </button>
@@ -93,15 +96,18 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen }) {
       </div>
 
       {/* Mega panel — fuera del nav-wrap para no afectar el flex layout */}
-      {megaOpen && (
+      {megaOpen && MEGA_DATA[megaOpen] && (
         <div
           className="mega-panel-wrap"
-          onMouseEnter={openMega}
+          onMouseEnter={() => openMega(megaOpen)}
           onMouseLeave={closeMega}
         >
           <MegaMenu
+            data={MEGA_DATA[megaOpen]}
+            tabId={megaOpen}
             setTab={setTab}
-            onClose={() => setMegaOpen(false)}
+            onClose={() => setMegaOpen(null)}
+            onResetProduct={() => setSelectedProduct(null)}
           />
         </div>
       )}
@@ -168,19 +174,24 @@ function Footer({ setTab }) {
 }
 
 export default function App() {
-  const [tab, setTab]               = useState("inicio");
-  const [menuOpen, setMenuOpen]     = useState(false);
-  const [splashDone, setSplashDone] = useState(false);
+  const [tab, setTab]                       = useState("inicio");
+  const [menuOpen, setMenuOpen]             = useState(false);
+  const [splashDone, setSplashDone]         = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedService, setSelectedService] = useState(null);
 
   const handleSplashDone = useCallback(() => setSplashDone(true), []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
+    setSelectedProduct(null);
+    setSelectedService(null);
   }, [tab]);
 
   const anim = {
     inicio:    "anim-up",
     productos: "anim-scale",
+    servicios: "anim-up",
     asesoria:  "anim-blur",
     nosotros:  "anim-up-slow",
     contacto:  "anim-fade",
@@ -188,7 +199,8 @@ export default function App() {
 
   const pages = {
     inicio:    <Inicio    setTab={setTab} />,
-    productos: <Productos />,
+    productos: <Productos selected={selectedProduct} setSelected={setSelectedProduct} />,
+    servicios: <Servicios selected={selectedService} setSelected={setSelectedService} />,
     asesoria:  <Asesoria  />,
     nosotros:  <Nosotros  />,
     contacto:  <Contacto  />,
@@ -198,14 +210,29 @@ export default function App() {
 
   return (
     <div className="app">
-      <Nav tab={tab} setTab={setTab} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <Nav tab={tab} setTab={setTab} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setSelectedProduct={setSelectedProduct} />
 
       <MobileMenu
         tab={tab}
         setTab={setTab}
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
+        setSelectedProduct={setSelectedProduct}
+        setSelectedService={setSelectedService}
       />
+
+      {((tab === "productos" && selectedProduct) || (tab === "servicios" && selectedService)) && (
+        <button
+          className="prod-back"
+          onClick={() => {
+            setSelectedProduct(null);
+            setSelectedService(null);
+            window.scrollTo({ top: 0, behavior: "instant" });
+          }}
+        >
+          ← Retroceder
+        </button>
+      )}
 
       <main className={`page ${anim[tab] ?? "anim-up"}`} key={tab}>
         {pages[tab]}
