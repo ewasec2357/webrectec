@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://recursostecnologicos.pe/sitemap.xml
+Sitemap: https://www.recursostecnologicos.com/sitemap.xml

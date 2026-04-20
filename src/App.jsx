@@ -1,16 +1,21 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef } from "react"; // legal pages added
 import "./styles.css";
 import { TABS, PRODUCTS, SERVICES, wm, COMPANY } from "./constants.js";
 import { WaIcon, CompanyLogo } from "./components/Icons.jsx";
 import Splash      from "./components/Splash.jsx";
 import MegaMenu    from "./components/MegaMenu.jsx";
 import MobileMenu  from "./components/MobileMenu.jsx";
-import Inicio    from "./pages/Inicio.jsx";
-import Productos from "./pages/Productos.jsx";
-import Servicios from "./pages/Servicios.jsx";
-import Asesoria  from "./pages/Asesoria.jsx";
-import Nosotros  from "./pages/Nosotros.jsx";
-import Contacto  from "./pages/Contacto.jsx";
+import Inicio              from "./pages/Inicio.jsx";
+import Productos           from "./pages/Productos.jsx";
+import Servicios           from "./pages/Servicios.jsx";
+import Asesoria            from "./pages/Asesoria.jsx";
+import Nosotros            from "./pages/Nosotros.jsx";
+import Contacto            from "./pages/Contacto.jsx";
+import Privacidad          from "./pages/Privacidad.jsx";
+import Terminos            from "./pages/Terminos.jsx";
+import Cookies             from "./pages/Cookies.jsx";
+import LibroReclamaciones  from "./pages/LibroReclamaciones.jsx";
+import CookieBanner        from "./components/CookieBanner.jsx";
 
 const CY = new Date().getFullYear();
 
@@ -91,7 +96,11 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct }) {
           onClick={() => setMenuOpen(true)}
           aria-label="Abrir menú"
         >
-          <span /><span /><span />
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="3" y1="6"  x2="21" y2="6"  />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
         </button>
       </div>
 
@@ -116,6 +125,9 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct }) {
 }
 
 function Footer({ setTab }) {
+  const [open, setOpen] = useState({});
+  const toggle = (k) => setOpen(o => ({ ...o, [k]: !o[k] }));
+
   return (
     <footer className="footer">
       <div className="footer-inner">
@@ -142,8 +154,8 @@ function Footer({ setTab }) {
             </div>
           </div>
 
-          <div className="footer-col">
-            <h4>Productos</h4>
+          <div className={`footer-col${open.productos ? " fc-open" : ""}`}>
+            <h4 onClick={() => toggle("productos")}>Productos</h4>
             <ul>
               {[["Baterías de Litio"],["Energía Solar"],["Vehículos Eléctricos"]].map(([l]) => (
                 <li key={l}><a onClick={() => setTab("productos")}>{l}</a></li>
@@ -151,8 +163,8 @@ function Footer({ setTab }) {
             </ul>
           </div>
 
-          <div className="footer-col">
-            <h4>Empresa</h4>
+          <div className={`footer-col${open.empresa ? " fc-open" : ""}`}>
+            <h4 onClick={() => toggle("empresa")}>Empresa</h4>
             <ul>
               <li><a onClick={() => setTab("asesoria")}>Asesoría Solar</a></li>
               <li><a onClick={() => setTab("nosotros")}>Nosotros</a></li>
@@ -161,11 +173,30 @@ function Footer({ setTab }) {
               <li><a href={COMPANY.instagram} target="_blank" rel="noreferrer">Instagram</a></li>
             </ul>
           </div>
+
+          <div className={`footer-col${open.legal ? " fc-open" : ""}`}>
+            <h4 onClick={() => toggle("legal")}>Legal</h4>
+            <ul>
+              <li><a onClick={() => setTab("privacidad")}>Política de Privacidad</a></li>
+              <li><a onClick={() => setTab("terminos")}>Términos y Condiciones</a></li>
+              <li><a onClick={() => setTab("cookies")}>Política de Cookies</a></li>
+              <li><a onClick={() => setTab("reclamaciones")} className="footer-reclamos">📋 Libro de Reclamaciones</a></li>
+            </ul>
+          </div>
         </div>
 
         <div className="footer-bottom">
           <div className="footer-copy">
-            <p><strong>© {CY} Recursos Tecnológicos S.A.C.</strong> — Todos los derechos reservados. Lima, Perú.</p>
+            <p><strong>© {CY} Recursos Tecnológicos S.A.C.</strong> — RUC 20605469729 — Todos los derechos reservados. Lima, Perú.</p>
+          </div>
+          <div className="footer-legal-links">
+            <a onClick={() => setTab("privacidad")}>Privacidad</a>
+            <span>·</span>
+            <a onClick={() => setTab("terminos")}>Términos</a>
+            <span>·</span>
+            <a onClick={() => setTab("cookies")}>Cookies</a>
+            <span>·</span>
+            <a onClick={() => setTab("reclamaciones")}>Reclamaciones</a>
           </div>
         </div>
       </div>
@@ -198,12 +229,16 @@ export default function App() {
   };
 
   const pages = {
-    inicio:    <Inicio    setTab={setTab} />,
-    productos: <Productos selected={selectedProduct} setSelected={setSelectedProduct} />,
-    servicios: <Servicios selected={selectedService} setSelected={setSelectedService} />,
-    asesoria:  <Asesoria  />,
-    nosotros:  <Nosotros  />,
-    contacto:  <Contacto  />,
+    inicio:              <Inicio    setTab={setTab} />,
+    productos:           <Productos selected={selectedProduct} setSelected={setSelectedProduct} />,
+    servicios:           <Servicios selected={selectedService} setSelected={setSelectedService} />,
+    asesoria:            <Asesoria  />,
+    nosotros:            <Nosotros  />,
+    contacto:            <Contacto  />,
+    privacidad:          <Privacidad setTab={setTab} />,
+    terminos:            <Terminos  setTab={setTab} />,
+    cookies:             <Cookies   setTab={setTab} />,
+    reclamaciones:       <LibroReclamaciones />,
   };
 
   if (!splashDone) return <Splash onDone={handleSplashDone} />;
@@ -239,6 +274,8 @@ export default function App() {
       </main>
 
       <Footer setTab={setTab} />
+
+      <CookieBanner setTab={setTab} />
 
       <a
         href={wm("Hola, necesito información")}

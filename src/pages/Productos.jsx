@@ -1,12 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PRODUCTS, wm } from "../constants.js";
 import { WaIcon } from "../components/Icons.jsx";
 
 /* ── Carrusel de imágenes ── */
 function Carousel({ images, badge }) {
   const [idx, setIdx] = useState(0);
-  const prev = () => setIdx(i => (i - 1 + images.length) % images.length);
-  const next = () => setIdx(i => (i + 1) % images.length);
+  const timerRef = useRef(null);
+
+  function resetTimer() {
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setIdx(i => (i + 1) % images.length);
+    }, 3000);
+  }
+
+  useEffect(() => {
+    resetTimer();
+    return () => clearInterval(timerRef.current);
+  }, [images.length]);
+
+  const prev = () => { setIdx(i => (i - 1 + images.length) % images.length); resetTimer(); };
+  const next = () => { setIdx(i => (i + 1) % images.length); resetTimer(); };
+
   return (
     <div className="carousel">
       <img src={images[idx]} alt="" />
@@ -15,7 +30,7 @@ function Carousel({ images, badge }) {
       <button className="car-btn car-next" onClick={next}>›</button>
       <div className="car-dots">
         {images.map((_, i) => (
-          <button key={i} className={`car-dot${i === idx ? " active" : ""}`} onClick={() => setIdx(i)} />
+          <button key={i} className={`car-dot${i === idx ? " active" : ""}`} onClick={() => { setIdx(i); resetTimer(); }} />
         ))}
       </div>
     </div>
