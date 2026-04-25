@@ -15,9 +15,10 @@ function Carousel({ images, badge }) {
   }
 
   useEffect(() => {
+    setIdx(0);
     resetTimer();
     return () => clearInterval(timerRef.current);
-  }, [images.length]);
+  }, [images[0]]);
 
   const prev = () => { setIdx(i => (i - 1 + images.length) % images.length); resetTimer(); };
   const next = () => { setIdx(i => (i + 1) % images.length); resetTimer(); };
@@ -37,8 +38,14 @@ function Carousel({ images, badge }) {
   );
 }
 
+const SPECS_PREVIEW = 3;
+
 /* ── Página de detalle: UN solo producto ── */
 function ProductDetail({ item }) {
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? item.specs : item.specs.slice(0, SPECS_PREVIEW);
+  const hasMore = item.specs.length > SPECS_PREVIEW;
+
   return (
     <div className="prod-detail fade">
       <div className="prod-detail-inner">
@@ -53,13 +60,20 @@ function ProductDetail({ item }) {
           <p className="prod-tagline">{item.tagline}</p>
           <p className="prod-desc">{item.desc}</p>
           <div className="prod-specs">
-            <div className="prod-specs-title">Especificaciones técnicas</div>
-            {item.specs.map(([k, v]) => (
-              <div className="prod-spec-row" key={k}>
-                <span className="prod-spec-k">{k}</span>
-                <span className="prod-spec-v">{v}</span>
-              </div>
+            <div className="prod-specs-title">Especificaciones Técnicas</div>
+            {visible.map(([k, v], i) => (
+              v === "__section__"
+                ? <div className="prod-spec-section-hdr" key={i}>{k}</div>
+                : <div className="prod-spec-row" key={i}>
+                    <span className="prod-spec-k">{k}</span>
+                    <span className="prod-spec-v">{v}</span>
+                  </div>
             ))}
+            {hasMore && (
+              <button className="specs-toggle" onClick={() => setShowAll(o => !o)}>
+                {showAll ? "Mostrar menos ▲" : `Mostrar más (${item.specs.length - SPECS_PREVIEW} más) ▼`}
+              </button>
+            )}
           </div>
           <a href={wm(item.waMsg)} className="prod-cta" target="_blank" rel="noreferrer">
             <WaIcon size={16} /> Cotizar por WhatsApp

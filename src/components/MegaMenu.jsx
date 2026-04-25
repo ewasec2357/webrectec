@@ -1,18 +1,25 @@
 import { useState, useEffect } from "react";
 
-export default function MegaMenu({ data, setTab, tabId, onClose, onResetProduct }) {
+export default function MegaMenu({ data, setTab, tabId, onClose, onResetProduct, onSelectItem }) {
   const [activeId, setActiveId] = useState(data[0].id);
   useEffect(() => { setActiveId(data[0].id); }, [data]);
   const active = data.find(p => p.id === activeId) ?? data[0];
 
-  function go(id) {
+  function goCategory(catId) {
     if (onResetProduct) onResetProduct();
     setTab(tabId);
     onClose();
     setTimeout(() => {
-      const el = document.getElementById(`prod-${id}`);
+      const el = document.getElementById(`prod-${catId}`);
       if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 150);
+  }
+
+  function goItem(item) {
+    if (onSelectItem) onSelectItem(item);
+    setTab(tabId);
+    onClose();
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   return (
@@ -26,7 +33,7 @@ export default function MegaMenu({ data, setTab, tabId, onClose, onResetProduct 
               key={cat.id}
               className={`mega-cat-btn ${cat.id === activeId ? "active" : ""}`}
               onMouseEnter={() => setActiveId(cat.id)}
-              onClick={() => go(cat.id)}
+              onClick={() => goCategory(cat.id)}
             >
               <span className="mega-cat-icon">{cat.icon}</span>
               {cat.label}
@@ -42,7 +49,7 @@ export default function MegaMenu({ data, setTab, tabId, onClose, onResetProduct 
               <div
                 key={item.id}
                 className="mega-prod-card"
-                onClick={() => go(item.id)}
+                onClick={() => goItem(item)}
               >
                 <div className="mega-prod-img">
                   <img src={item.img} alt={item.name} loading="lazy" />

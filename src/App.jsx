@@ -21,7 +21,7 @@ const CY = new Date().getFullYear();
 
 const MEGA_DATA = { productos: PRODUCTS, servicios: SERVICES };
 
-function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct }) {
+function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct, setSelectedService }) {
   const [megaOpen, setMegaOpen] = useState(null); // null | "productos" | "servicios"
   const [scrolled, setScrolled] = useState(false);
   const navRef = useRef(null);
@@ -116,7 +116,11 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct }) {
             tabId={megaOpen}
             setTab={setTab}
             onClose={() => setMegaOpen(null)}
-            onResetProduct={() => setSelectedProduct(null)}
+            onResetProduct={() => { setSelectedProduct(null); setSelectedService(null); }}
+            onSelectItem={(item) => {
+              if (megaOpen === "productos") { setSelectedProduct(item); setSelectedService(null); }
+              if (megaOpen === "servicios") { setSelectedService(item); setSelectedProduct(null); }
+            }}
           />
         </div>
       )}
@@ -245,7 +249,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Nav tab={tab} setTab={setTab} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setSelectedProduct={setSelectedProduct} />
+      <Nav tab={tab} setTab={setTab} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setSelectedProduct={setSelectedProduct} setSelectedService={setSelectedService} />
 
       <MobileMenu
         tab={tab}

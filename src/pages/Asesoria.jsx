@@ -3,14 +3,21 @@ import { wm } from "../constants.js";
 export default function Asesoria() {
   return (
     <div className="fade">
-      <div className="page-hero"><div className="ph-inner">
-        <div className="ph-label">Asesoría de proyectos solares</div>
-        <h2>Tu Proyecto Solar,<br/><em>Diseñado por Ingenieros</em></h2>
-        <p>Desde paneles para tu hogar hasta plantas solares industriales. Evaluamos tu caso, diseñamos el sistema óptimo, calculamos el retorno de inversión y acompañamos todo el proceso hasta la puesta en marcha.</p>
-        <a href={wm("Quiero asesoría para proyecto solar")} className="btn-primary" style={{display:"inline-flex",textDecoration:"none"}} target="_blank" rel="noreferrer">
-          📐 Iniciar mi proyecto
-        </a>
-      </div></div>
+      <div className="page-hero page-hero--video">
+        <div className="ph-inner">
+          <div className="ph-label">Asesoría de proyectos solares</div>
+          <h2>Tu Proyecto Solar,<br/><em>Diseñado por Ingenieros</em></h2>
+          <p>Desde paneles para tu hogar hasta plantas solares industriales. Evaluamos tu caso, diseñamos el sistema óptimo, calculamos el retorno de inversión y acompañamos todo el proceso hasta la puesta en marcha.</p>
+          <a href={wm("Quiero asesoría para proyecto solar")} className="btn-primary" style={{display:"inline-flex",textDecoration:"none"}} target="_blank" rel="noreferrer">
+            📐 Iniciar mi proyecto
+          </a>
+        </div>
+        <div className="ph-video-wrap">
+          <video autoPlay muted loop playsInline className="ph-video">
+            <source src="/asesoria-solar.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </div>
 
       <div className="sec-hdr">
         <div className="sec-label">Escala del proyecto</div>
