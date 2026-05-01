@@ -4,34 +4,46 @@ import { WaIcon } from "../components/Icons.jsx";
 
 /* ── Carrusel de imágenes ── */
 function Carousel({ images, badge }) {
-  const [idx, setIdx] = useState(0);
+  const [idx, setIdx]       = useState(0);
+  const [loaded, setLoaded] = useState(false);
   const timerRef = useRef(null);
 
   function resetTimer() {
     clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setIdx(i => (i + 1) % images.length);
-    }, 3000);
+    timerRef.current = setInterval(() => setIdx(i => (i + 1) % images.length), 3000);
   }
 
+  // Cuando cambia el producto: reiniciar + precargar todas las imágenes
   useEffect(() => {
     setIdx(0);
+    setLoaded(false);
     resetTimer();
+    images.forEach(src => { const img = new Image(); img.src = src; });
     return () => clearInterval(timerRef.current);
   }, [images[0]]);
+
+  // Cuando cambia el slide: marcar como no cargado hasta que onLoad dispare
+  useEffect(() => { setLoaded(false); }, [idx]);
 
   const prev = () => { setIdx(i => (i - 1 + images.length) % images.length); resetTimer(); };
   const next = () => { setIdx(i => (i + 1) % images.length); resetTimer(); };
 
   return (
     <div className="carousel">
-      <img src={images[idx]} alt="" />
+      {!loaded && <div className="car-skeleton" />}
+      <img
+        src={images[idx]}
+        alt=""
+        onLoad={() => setLoaded(true)}
+        style={{ opacity: loaded ? 1 : 0 }}
+      />
       <span className="prod-badge">{badge}</span>
       <button className="car-btn car-prev" onClick={prev}>‹</button>
       <button className="car-btn car-next" onClick={next}>›</button>
       <div className="car-dots">
         {images.map((_, i) => (
-          <button key={i} className={`car-dot${i === idx ? " active" : ""}`} onClick={() => { setIdx(i); resetTimer(); }} />
+          <button key={i} className={`car-dot${i === idx ? " active" : ""}`}
+            onClick={() => { setIdx(i); resetTimer(); }} />
         ))}
       </div>
     </div>

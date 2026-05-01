@@ -16,6 +16,7 @@ import Terminos            from "./pages/Terminos.jsx";
 import Cookies             from "./pages/Cookies.jsx";
 import LibroReclamaciones  from "./pages/LibroReclamaciones.jsx";
 import CookieBanner        from "./components/CookieBanner.jsx";
+import BottomNav           from "./components/BottomNav.jsx";
 
 const CY = new Date().getFullYear();
 
@@ -278,6 +279,8 @@ export default function App() {
       </main>
 
       <Footer setTab={setTab} />
+
+      <BottomNav tab={tab} setTab={setTab} setSelectedProduct={setSelectedProduct} setSelectedService={setSelectedService} />
 
       <CookieBanner setTab={setTab} />
 

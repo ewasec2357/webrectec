@@ -71,26 +71,10 @@ export default function Contacto() {
     <div className="fade">
       {/* FILA SUPERIOR: info + formulario */}
       <div className="ctl">
-        {/* Columna izquierda */}
-        <div className="cti">
-          <div className="sec-label" style={{ marginBottom: 12 }}>Contacto</div>
-          <h2>Hablemos<br/>Hoy Mismo</h2>
+        {/* Encabezado — visible primero en mobile */}
+        <div className="cti-hdr">
+          <h2 style={{ borderLeft: "3px solid var(--amber-l)", paddingLeft: 14 }}>Hablemos<br/>Hoy Mismo</h2>
           <p>¿Batería dañada? ¿Proyecto solar? ¿Vehículo sin potencia? Escríbenos y recibe atención directa de un ingeniero. Respondemos en menos de 2 horas.</p>
-
-          {/* Redes sociales */}
-          <div className="cms">
-            {socials.map(s => (
-              <a key={s.val} className="cm cm-lg" href={s.href} target="_blank" rel="noreferrer">
-                <div className="cm-ic" style={{ background: s.bg, color: s.color }}>
-                  {s.logo}
-                </div>
-                <div>
-                  <div className="cm-label">{s.label}</div>
-                  <div className="cm-val cm-val-lg">{s.val}</div>
-                </div>
-              </a>
-            ))}
-          </div>
         </div>
 
         {/* Formulario */}
@@ -129,6 +113,23 @@ export default function Contacto() {
             />
           </div>
           <button className="btn-submit" onClick={send}>Enviar por WhatsApp ↗</button>
+        </div>
+
+        {/* Redes sociales — al final en mobile */}
+        <div className="cti-socials">
+          <div className="cms">
+            {socials.map(s => (
+              <a key={s.val} className="cm cm-lg" href={s.href} target="_blank" rel="noreferrer">
+                <div className="cm-ic" style={{ background: s.bg, color: s.color }}>
+                  {s.logo}
+                </div>
+                <div>
+                  <div className="cm-label">{s.label}</div>
+                  <div className="cm-val cm-val-lg">{s.val}</div>
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 
