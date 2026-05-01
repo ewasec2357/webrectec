@@ -99,7 +99,7 @@ function ServiceDetail({ item }) {
           {item.video
             ? (
               <div className="carousel" style={{ background: "#0a0f1e" }}>
-                <video src={item.video} autoPlay muted loop playsInline />
+                <video src={item.video} autoPlay muted loop playsInline preload="auto" poster={item.imgL} />
                 <span className="prod-badge">{item.badge}</span>
               </div>
             )

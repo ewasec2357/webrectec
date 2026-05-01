@@ -13,9 +13,7 @@ export default function Asesoria() {
           </a>
         </div>
         <div className="ph-video-wrap">
-          <video autoPlay muted loop playsInline className="ph-video">
-            <source src="/asesoria-solar.mp4" type="video/mp4" />
-          </video>
+          <video src="/asesoria-solar.mp4" autoPlay muted loop playsInline preload="auto" className="ph-video" />
         </div>
       </div>
 

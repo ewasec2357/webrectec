@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, Fragment } from "react";
 import { WaIcon } from "../components/Icons.jsx";
 import { wm } from "../constants.js";
 
@@ -66,18 +66,8 @@ const CLIENTES = [
 ];
 
 export default function Inicio({ setTab }) {
-  const videoRef = useRef(null);
   const [activo, setActivo] = useState(0);
 
-  useEffect(() => {
-    const vid = videoRef.current;
-    if (!vid) return;
-    const onEnded = () => {
-      setTimeout(() => { vid.currentTime = 0; vid.play(); }, 1000);
-    };
-    vid.addEventListener("ended", onEnded);
-    return () => vid.removeEventListener("ended", onEnded);
-  }, []);
 
   const panel = CLIENTES[activo].panel;
 
@@ -87,7 +77,7 @@ export default function Inicio({ setTab }) {
 
       {/* HERO — full bleed con video */}
       <div className="hero-full">
-        <video ref={videoRef} className="hero-video" autoPlay muted playsInline disablePictureInPicture x-webkit-airplay="deny">
+        <video className="hero-video" autoPlay muted loop playsInline preload="auto" poster="/hero-poster.avif" disablePictureInPicture x-webkit-airplay="deny">
           <source src="/hero-video.mp4" type="video/mp4" />
         </video>
         <div className="hero-full-overlay" />
@@ -118,7 +108,7 @@ export default function Inicio({ setTab }) {
       {/* ── SECCIÓN 1: ¿QUIÉN ERES? ── */}
       <section className="qs-wrap">
         <div className="sec-hdr" style={{ textAlign: "center", marginBottom: 28 }}>
-          <div className="sec-label" style={{ justifyContent: "center" }}>01 · ¿Quién eres?</div>
+
           <h2 className="sec-h2" style={{ fontSize: "clamp(26px,3.5vw,42px)" }}>
             Trabajamos con <em>4 tipos</em> de cliente.
           </h2>
@@ -136,7 +126,6 @@ export default function Inicio({ setTab }) {
             >
               <div className="qs-card-top">
                 <div className="qs-icon">{c.icon}</div>
-                <span className="qs-num">{c.num}</span>
               </div>
               <div className="qs-titulo">{c.titulo}</div>
               <div className="qs-sub">{c.sub}</div>
@@ -184,7 +173,7 @@ export default function Inicio({ setTab }) {
       {/* ── SECCIÓN 3: LO QUE HACEMOS ── */}
       <section style={{ marginTop: 52 }}>
         <div className="sec-hdr" style={{ marginBottom: 24 }}>
-          <div className="sec-label">02 · Lo que hacemos</div>
+
           <h2 className="sec-h2">Tres pilares · <em>una sola empresa</em></h2>
         </div>
         <div className="pilares-grid">
@@ -194,7 +183,6 @@ export default function Inicio({ setTab }) {
             { num: "03", ic: "⚡", ti: "Vehículos Eléctricos", de: "Conversión a litio · 3× autonomía · garantía.", tab: "productos" },
           ].map(p => (
             <div key={p.ti} className="pilar-card">
-              <div className="pilar-num">{p.num}</div>
               <div className="pilar-body">
                 <div className="pilar-ic">{p.ic}</div>
                 <div>
@@ -212,11 +200,11 @@ export default function Inicio({ setTab }) {
       <section className="trust-row">
         {/* Bloque izquierdo: Alianzas */}
         <div className="trust-left">
-          <div className="sec-label">03 · Alianzas directas</div>
+
           <h2 className="sec-h2" style={{ marginBottom: 6 }}>
             Trabajamos directo con <em>fábricas A1.</em>
           </h2>
-          <p className="sec-sub" style={{ marginBottom: 20 }}>= mejor precio + garantía real.</p>
+
           <div className="aliados-grid">
             {[
               { src: "/partners/partner-eve.avif",     alt: "EVE Energy" },
@@ -234,7 +222,7 @@ export default function Inicio({ setTab }) {
         {/* Bloque derecho: Certificaciones */}
         <div className="trust-right">
           <div className="cert-card">
-            <div className="sec-label">04 · Certificamos todo</div>
+
             <h2 className="sec-h2" style={{ marginBottom: 14 }}>
               Cada trabajo lleva <em>informe técnico</em> firmado.
             </h2>

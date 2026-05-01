@@ -8,6 +8,8 @@ export default function MobileMenu({ tab, setTab, open, onClose, setSelectedProd
   const [expanded, setExpanded] = useState(null);
 
   function go(id) {
+    if (setSelectedProduct) setSelectedProduct(null);
+    if (setSelectedService) setSelectedService(null);
     setTab(id);
     onClose();
     setExpanded(null);

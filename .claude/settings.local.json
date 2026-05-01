@@ -108,7 +108,19 @@
       "Bash(cp \"C:\\\\Users\\\\micha\\\\Desktop\\\\Fotos Pagina Web\\\\MARCAS DE PARTNERS\\\\eve.avif\" \"C:\\\\Users\\\\micha\\\\Desktop\\\\rt-web\\\\public\\\\partners\\\\partner-eve.avif\")",
       "Bash(python3 -c ' *)",
       "Bash(python -c ' *)",
-      "Bash(npm ls *)"
+      "Bash(npm ls *)",
+      "Bash(ffmpeg -y -i productos/materiales/holders/1.jpeg -vf \"scale='min\\(800,iw\\)':-2\" -qscale:v 8 /tmp/test_holders.jpeg)",
+      "Read(//tmp/**)",
+      "PowerShell(Get-Command *)",
+      "Bash(awk '{printf \"%.1f MB\\\\n\", $1/1024/1024}')",
+      "Read(//c/ffmpeg/**)",
+      "Read(//c/Program Files/ffmpeg/**)",
+      "Bash(where.exe ffmpeg *)",
+      "PowerShell(winget *)",
+      "Read(//c/Users/micha/Desktop/Fotos Pagina Web/REPARACION DE BATERIAS//**)",
+      "Read(//c/Users/micha/Desktop/Fotos Pagina Web/REEMPLAZO DE BMS//**)",
+      "Bash(\"C:\\\\Users\\\\micha\\\\AppData\\\\Local\\\\Microsoft\\\\WinGet\\\\Packages\\\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\\\ffmpeg-7.1.1-full_build\\\\bin\\\\ffprobe.exe\" -v quiet -select_streams v:0 -show_entries stream=width,height,codec_name,nb_frames -show_entries stream_tags=rotate -of json \"public/servicios/reparacion/baterias/1.avif\" \"public/servicios/reparacion/baterias/2.avif\" \"public/servicios/reparacion/baterias/3.avif\")",
+      "PowerShell($env:PATH -split \";\" | Where-Object { $_ -match \"ffmpeg|gyan\" })"
     ]
   }
 }

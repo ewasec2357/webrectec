@@ -46,7 +46,7 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct, setSelect
     <nav className={`nav${scrolled ? " nav-scrolled" : ""}`} ref={navRef}>
       <div className="nav-wrap">
         {/* LOGO */}
-        <div className="nav-logo" onClick={() => { setTab("inicio"); setMegaOpen(false); }}>
+        <div className="nav-logo" onClick={() => { setTab("inicio"); setMegaOpen(false); setSelectedProduct(null); setSelectedService(null); }}>
           <CompanyLogo size={64} dark={true} />
           <div>
             <div className="logo-name">RECURSOS TECNOLÓGICOS</div>
@@ -65,7 +65,7 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct, setSelect
             >
               <button
                 className={`tab-link ${tab === t.id ? "active" : ""} ${megaOpen === t.id ? "mega-open" : ""}`}
-                onClick={() => { setTab(t.id); setMegaOpen(null); }}
+                onClick={() => { setTab(t.id); setMegaOpen(null); setSelectedProduct(null); setSelectedService(null); }}
               >
                 {t.label}
                 <svg className="mega-arrow" viewBox="0 0 10 6" width="10" height="10" fill="none">
@@ -219,9 +219,13 @@ export default function App() {
   const handleSplashDone = useCallback(() => setSplashDone(true), []);
 
   useEffect(() => {
+    [...PRODUCTS, ...SERVICES].flatMap(c => c.items).forEach(item => {
+      if (item.img) new Image().src = item.img;
+    });
+  }, []);
+
+  useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
-    setSelectedProduct(null);
-    setSelectedService(null);
   }, [tab]);
 
   const anim = {
@@ -246,54 +250,62 @@ export default function App() {
     reclamaciones:       <LibroReclamaciones />,
   };
 
-  if (!splashDone) return <Splash onDone={handleSplashDone} />;
-
   return (
     <div className="app">
-      <Nav tab={tab} setTab={setTab} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setSelectedProduct={setSelectedProduct} setSelectedService={setSelectedService} />
+      {/* Precarga de videos — renderizan desde t=0 durante el splash */}
+      <div style={{ position: "absolute", width: 0, height: 0, overflow: "hidden", pointerEvents: "none" }}>
+        <video src="/hero-video.mp4" preload="auto" muted />
+        <video src="/asesoria-solar.mp4" preload="auto" muted />
+        <video src="/servicios/fabricacion/soldadura-punto/soldadura.mp4" preload="metadata" muted />
+        <video src="/servicios/fabricacion/fab-conversion/conversion.mp4" preload="metadata" muted />
+      </div>
 
-      <MobileMenu
-        tab={tab}
-        setTab={setTab}
-        open={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        setSelectedProduct={setSelectedProduct}
-        setSelectedService={setSelectedService}
-      />
+      {!splashDone ? <Splash onDone={handleSplashDone} /> : <>
+        <Nav tab={tab} setTab={setTab} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setSelectedProduct={setSelectedProduct} setSelectedService={setSelectedService} />
 
-      {((tab === "productos" && selectedProduct) || (tab === "servicios" && selectedService)) && (
-        <button
-          className="prod-back"
-          onClick={() => {
-            setSelectedProduct(null);
-            setSelectedService(null);
-            window.scrollTo({ top: 0, behavior: "instant" });
-          }}
+        <MobileMenu
+          tab={tab}
+          setTab={setTab}
+          open={menuOpen}
+          onClose={() => setMenuOpen(false)}
+          setSelectedProduct={setSelectedProduct}
+          setSelectedService={setSelectedService}
+        />
+
+        {((tab === "productos" && selectedProduct) || (tab === "servicios" && selectedService)) && (
+          <button
+            className="prod-back"
+            onClick={() => {
+              setSelectedProduct(null);
+              setSelectedService(null);
+              window.scrollTo({ top: 0, behavior: "instant" });
+            }}
+          >
+            ← Retroceder
+          </button>
+        )}
+
+        <main className={`page ${anim[tab] ?? "anim-up"}`} key={tab}>
+          {pages[tab]}
+        </main>
+
+        <Footer setTab={setTab} />
+
+        <BottomNav tab={tab} setTab={setTab} setSelectedProduct={setSelectedProduct} setSelectedService={setSelectedService} />
+
+        <CookieBanner setTab={setTab} />
+
+        <a
+          href={wm("Hola, necesito información")}
+          className="waf"
+          target="_blank"
+          rel="noreferrer"
+          title="Escríbenos por WhatsApp"
+          aria-label="Contactar por WhatsApp"
         >
-          ← Retroceder
-        </button>
-      )}
-
-      <main className={`page ${anim[tab] ?? "anim-up"}`} key={tab}>
-        {pages[tab]}
-      </main>
-
-      <Footer setTab={setTab} />
-
-      <BottomNav tab={tab} setTab={setTab} setSelectedProduct={setSelectedProduct} setSelectedService={setSelectedService} />
-
-      <CookieBanner setTab={setTab} />
-
-      <a
-        href={wm("Hola, necesito información")}
-        className="waf"
-        target="_blank"
-        rel="noreferrer"
-        title="Escríbenos por WhatsApp"
-        aria-label="Contactar por WhatsApp"
-      >
-        <WaIcon size={30} />
-      </a>
+          <WaIcon size={30} />
+        </a>
+      </>}
     </div>
   );
 }

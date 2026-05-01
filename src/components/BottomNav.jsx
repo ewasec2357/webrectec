@@ -50,9 +50,10 @@ export default function BottomNav({ tab, setTab, setSelectedProduct, setSelected
     setActiveCategory(null);
   }
 
-  function goTab(id) { setTab(id); closeDrawer(); }
+  function goTab(id) { setSelectedProduct(null); setSelectedService(null); setTab(id); closeDrawer(); }
 
   function openCategory(cat, type) {
+    cat.items.forEach(item => { if (item.img) new Image().src = item.img; });
     setActiveCategory({ cat, type });
   }
 
@@ -73,6 +74,13 @@ export default function BottomNav({ tab, setTab, setSelectedProduct, setSelected
 
   return (
     <>
+      {/* Preload oculto de thumbnails */}
+      <div style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", opacity: 0, pointerEvents: "none" }}>
+        {[...PRODUCTS, ...SERVICES].flatMap(c => c.items).map(item =>
+          item.img ? <img key={item.id} src={item.img} alt="" width="1" height="1" /> : null
+        )}
+      </div>
+
       {/* Backdrop */}
       {drawerOpen && (
         <div className="bnav-backdrop" onClick={closeDrawer} />
@@ -133,7 +141,7 @@ export default function BottomNav({ tab, setTab, setSelectedProduct, setSelected
                 onClick={() => selectItem(item, activeCategory.type)}
               >
                 {item.img && (
-                  <img className="bnav-drawer-thumb" src={item.img} alt={item.name} loading="lazy" />
+                  <img className="bnav-drawer-thumb" src={item.img} alt={item.name} />
                 )}
                 <span className="bnav-drawer-item-info">
                   <span className="bnav-drawer-item-name">{item.name}</span>
