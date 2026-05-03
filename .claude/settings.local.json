@@ -120,7 +120,8 @@
       "Read(//c/Users/micha/Desktop/Fotos Pagina Web/REPARACION DE BATERIAS//**)",
       "Read(//c/Users/micha/Desktop/Fotos Pagina Web/REEMPLAZO DE BMS//**)",
       "Bash(\"C:\\\\Users\\\\micha\\\\AppData\\\\Local\\\\Microsoft\\\\WinGet\\\\Packages\\\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\\\ffmpeg-7.1.1-full_build\\\\bin\\\\ffprobe.exe\" -v quiet -select_streams v:0 -show_entries stream=width,height,codec_name,nb_frames -show_entries stream_tags=rotate -of json \"public/servicios/reparacion/baterias/1.avif\" \"public/servicios/reparacion/baterias/2.avif\" \"public/servicios/reparacion/baterias/3.avif\")",
-      "PowerShell($env:PATH -split \";\" | Where-Object { $_ -match \"ffmpeg|gyan\" })"
+      "PowerShell($env:PATH -split \";\" | Where-Object { $_ -match \"ffmpeg|gyan\" })",
+      "Bash(npm update *)"
     ]
   }
 }

@@ -228,6 +228,7 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [tab]);
 
+
   const anim = {
     inicio:    "anim-up",
     productos: "anim-scale",

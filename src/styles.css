@@ -6,6 +6,19 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
+/* ── SCROLL REVEAL ── */
+@keyframes revealFade {
+  0%   { opacity: 0;    filter: blur(8px); }
+  30%  { opacity: 0.15; filter: blur(4px); }
+  100% { opacity: 1;    filter: blur(0);   }
+}
+.reveal { opacity: 0; }
+.reveal.in { animation: revealFade 1.9s ease forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; }
+  .reveal.in { animation: none; }
+}
+
 :root {
   --cream:      #FAF7F2;
   --cream2:     #F2EDE4;
@@ -1581,7 +1594,7 @@ body {
   display: flex;
   align-items: center;
   gap: 20px;
-  margin-bottom: 0;
+  margin-bottom: 56px;
 }
 .cta-amber-icon {
   width: 52px; height: 52px;
@@ -1617,85 +1630,96 @@ body {
 }
 .cta-amber-btn:hover { background: var(--blue-dd); transform: translateY(-1px); }
 
-/* ── SECCIÓN 3: PILARES ── */
-.pilares-grid {
+/* ── SECCIÓN 3: BENEFICIOS LITIO ── */
+.beneficios-wrap {
+  padding: 80px var(--page-pad) 80px;
+}
+.beneficios-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-bottom: 32px;
+  gap: 24px;
 }
-.pilar-card {
-  background: var(--white);
-  border: 1px solid var(--border-s);
-  border-radius: 14px;
-  padding: 22px 20px;
-  box-shadow: 0 2px 8px var(--sh);
+.beneficio-card {
+  background: linear-gradient(160deg, #fff 60%, #e8f0fb 100%);
+  border-radius: 16px;
+  padding: 32px 22px 26px;
+  box-shadow: 0 2px 0 rgba(59,130,246,.35), 0 6px 28px rgba(0,87,184,.08);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  transition: all .22s;
-  position: relative;
+  align-items: center;
+  text-align: center;
+  gap: 13px;
+  transition: transform .25s, box-shadow .25s;
 }
-.pilar-card:hover { border-color: var(--border); transform: translateY(-3px); box-shadow: 0 10px 28px var(--sh2); }
-.pilar-num {
-  font-family: 'Outfit', sans-serif;
-  font-size: 11px; font-weight: 700;
-  letter-spacing: .1em; color: var(--text-dim);
+.beneficio-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 2px 0 rgba(0,87,184,.5), 0 20px 44px rgba(0,87,184,.14);
 }
-.pilar-body { display: flex; align-items: flex-start; gap: 14px; }
-.pilar-ic {
-  width: 40px; height: 40px;
-  border-radius: 9px;
+.beneficio-ic {
+  width: 56px; height: 56px;
+  border-radius: 50%;
   background: var(--blue-xl);
   display: flex; align-items: center; justify-content: center;
-  font-size: 20px; flex-shrink: 0;
+  font-size: 26px;
+  flex-shrink: 0;
 }
-.pilar-ti {
+.beneficio-ti {
   font-family: 'Outfit', sans-serif;
-  font-size: 15px; font-weight: 700;
-  color: var(--text); margin-bottom: 4px;
+  font-size: 13.5px; font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
 }
-.pilar-de { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 8px; }
-.pilar-link {
-  background: none; border: none;
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px; font-weight: 700;
-  color: var(--blue); cursor: pointer;
-  padding: 0; letter-spacing: .02em;
-  transition: color .2s;
+.beneficio-de {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin: 0;
 }
-.pilar-link:hover { color: var(--blue-d); }
 
 /* ── SECCIÓN 4: CONFIANZA ── */
 .trust-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
+  margin-top: 56px;
   margin-bottom: 32px;
+  align-items: center;
 }
-.trust-left {}
-.aliados-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+.trust-left { min-width: 0; }
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
+.aliados-ticker {
+  overflow: hidden;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+.aliados-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: ticker 8s linear infinite;
+}
+.aliados-ticker:hover .aliados-track { animation-play-state: paused; }
 .aliado-logo {
   background: var(--white);
   border: 1px solid var(--border-s);
-  border-radius: 10px;
-  height: 72px;
+  border-radius: 12px;
+  height: 80px;
+  width: 140px;
+  flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  padding: 10px 16px;
-  transition: box-shadow .2s;
+  padding: 12px 18px;
 }
-.aliado-logo:hover { box-shadow: 0 4px 14px var(--sh2); }
 .aliado-logo img {
-  max-width: 100%; max-height: 48px;
+  width: 100%; height: 52px;
   object-fit: contain; object-position: center;
-  filter: grayscale(30%);
-  transition: filter .2s;
+  filter: grayscale(20%);
+  transition: filter .22s;
 }
-.aliado-logo:hover img { filter: grayscale(0%); }
+.aliados-ticker:hover .aliado-logo img { filter: grayscale(0%); }
 
 .trust-right { display: flex; align-items: stretch; }
 .cert-card {
@@ -1739,7 +1763,7 @@ body {
 .final-cta-eyebrow {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 14px;
+  font-size: 20px;
   color: var(--amber-l);
   margin-bottom: 6px;
 }
@@ -2041,12 +2065,46 @@ body {
   .waf    { bottom: 68px; }
 }
 
+/* panel inline visible solo en mobile, desktop panel solo en desktop */
+.qs-panel-inline  { display: none; grid-column: 1 / -1; }
+.qs-panel-desktop { display: grid; }
+.qs-panel-mobile  { display: none; }
+
+@keyframes qsPanelFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── RESPONSIVE: carrusel mobile ── */
+@media (max-width: 900px) {
+  .qs-carousel-outer {
+    overflow: hidden;
+    width: 100%;
+  }
+  .qs-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 12px;
+  }
+  .qs-grid .qs-card {
+    flex: 0 0 80vw !important;
+    width: 80vw !important;
+  }
+  .qs-panel-inline { display: none !important; }
+  .qs-panel-mobile {
+    display: grid;
+    grid-template-columns: 1fr;
+    animation: qsPanelFade .2s ease forwards;
+  }
+  .qs-panel-desktop { display: none !important; }
+}
+
 /* ── RESPONSIVE: inicio secciones ── */
 @media (max-width: 900px) {
-  .qs-grid { grid-template-columns: 1fr 1fr; }
   .qs-panel { grid-template-columns: 1fr; }
   .qs-panel-right { align-items: flex-start; }
-  .pilares-grid { grid-template-columns: 1fr; }
+  .qs-panel-desktop { display: none; }
+  .beneficios-grid { grid-template-columns: 1fr 1fr; }
   .trust-row { grid-template-columns: 1fr; }
   .final-cta { flex-direction: column; align-items: flex-start; }
   .cta-amber { flex-wrap: wrap; }
@@ -2056,4 +2114,5 @@ body {
   .aliados-grid { grid-template-columns: 1fr 1fr; } /* ya es 2x2, mantener */
   .final-cta-btns { flex-direction: column; width: 100%; }
   .final-btn-amber, .final-btn-ghost { justify-content: center; }
+  .beneficios-grid { grid-template-columns: 1fr; }
 }

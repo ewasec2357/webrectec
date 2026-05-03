@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect, useRef } from "react";
 import { WaIcon } from "../components/Icons.jsx";
 import { wm } from "../constants.js";
 
@@ -67,7 +67,60 @@ const CLIENTES = [
 
 export default function Inicio({ setTab }) {
   const [activo, setActivo] = useState(0);
+  const gridRef = useRef(null);
+  const benefGridRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 900);
+  const autoTimer = useRef(null);
+  const touchStartX = useRef(0);
 
+  // Detectar mobile
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 900);
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // Auto-avance: en mobile mueve el carrusel, en desktop cicla el card activo
+  useEffect(() => {
+    autoTimer.current = setInterval(() => {
+      setActivo(a => (a + 1) % CLIENTES.length);
+    }, 2500);
+    return () => clearInterval(autoTimer.current);
+  }, []);
+
+  // Touch swipe para navegación manual
+  const onTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    clearInterval(autoTimer.current);
+  };
+  const onTouchEnd = (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (dx < -40) setActivo(a => Math.min(a + 1, CLIENTES.length - 1));
+    else if (dx > 40) setActivo(a => Math.max(a - 1, 0));
+  };
+
+  // Reveal loop de beneficio-cards: aparecen al bajar, se ocultan al subir
+  useEffect(() => {
+    const grid = benefGridRef.current;
+    if (!grid) return;
+    const cards = Array.from(grid.querySelectorAll('.beneficio-card'));
+    let timeouts = [];
+
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        timeouts = cards.map((card, i) =>
+          setTimeout(() => card.classList.add('in'), i * 200)
+        );
+      } else {
+        timeouts.forEach(clearTimeout);
+        timeouts = [];
+        cards.forEach(card => card.classList.remove('in'));
+      }
+    }, { threshold: 0.1 });
+
+    io.observe(grid);
+    return () => { io.disconnect(); timeouts.forEach(clearTimeout); };
+  }, []);
 
   const panel = CLIENTES[activo].panel;
 
@@ -117,25 +170,80 @@ export default function Inicio({ setTab }) {
           </p>
         </div>
 
-        <div className="qs-grid">
+        <div className="qs-carousel-outer" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        <div
+          className="qs-grid"
+          style={isMobile ? {
+            transform: `translateX(calc(-${activo} * 80vw - ${activo * 12}px))`,
+            transition: 'transform 0.55s ease',
+          } : {}}
+        >
           {CLIENTES.map((c, i) => (
-            <button
-              key={c.id}
-              className={`qs-card${activo === i ? " qs-card--active" : ""}`}
-              onClick={() => setActivo(i)}
-            >
-              <div className="qs-card-top">
-                <div className="qs-icon">{c.icon}</div>
-              </div>
-              <div className="qs-titulo">{c.titulo}</div>
-              <div className="qs-sub">{c.sub}</div>
-              <p className="qs-desc">{c.desc}</p>
-            </button>
+            <Fragment key={c.id}>
+              <button
+                className={`qs-card${activo === i ? " qs-card--active" : ""}`}
+                onClick={() => { clearInterval(autoTimer.current); setActivo(i); }}
+              >
+                <div className="qs-card-top">
+                  <div className="qs-icon">{c.icon}</div>
+                </div>
+                <div className="qs-titulo">{c.titulo}</div>
+                <div className="qs-sub">{c.sub}</div>
+                <p className="qs-desc">{c.desc}</p>
+              </button>
+              {activo === i && (
+                <div className="qs-panel qs-panel-inline">
+                  <div className="qs-panel-left">
+                    <span className="qs-panel-badge">{c.panel.badge}</span>
+                    <h3 className="qs-panel-h">{c.panel.h}</h3>
+                    <p className="qs-panel-p">{c.panel.p}</p>
+                  </div>
+                  <div className="qs-panel-center">
+                    {c.panel.servicios.map(s => (
+                      <div key={s} className="qs-check">
+                        <span className="qs-check-ic">✓</span>
+                        <span>{s}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="qs-panel-right">
+                    <div className="qs-case-ph">caso de uso</div>
+                    <button className="qs-ver-btn" onClick={() => setTab(c.panel.tab)}>
+                      Ver solución completa →
+                    </button>
+                  </div>
+                </div>
+              )}
+            </Fragment>
           ))}
         </div>
+        </div>
 
-        {/* Panel de detalle */}
-        <div className="qs-panel">
+        {/* Panel de detalle — solo mobile (carrusel) */}
+        <div className="qs-panel qs-panel-mobile" key={activo}>
+          <div className="qs-panel-left">
+            <span className="qs-panel-badge">{panel.badge}</span>
+            <h3 className="qs-panel-h">{panel.h}</h3>
+            <p className="qs-panel-p">{panel.p}</p>
+          </div>
+          <div className="qs-panel-center">
+            {panel.servicios.map(s => (
+              <div key={s} className="qs-check">
+                <span className="qs-check-ic">✓</span>
+                <span>{s}</span>
+              </div>
+            ))}
+          </div>
+          <div className="qs-panel-right">
+            <div className="qs-case-ph">caso de uso</div>
+            <button className="qs-ver-btn" onClick={() => setTab(panel.tab)}>
+              Ver solución completa →
+            </button>
+          </div>
+        </div>
+
+        {/* Panel de detalle — solo desktop */}
+        <div className="qs-panel qs-panel-desktop">
           <div className="qs-panel-left">
             <span className="qs-panel-badge">{panel.badge}</span>
             <h3 className="qs-panel-h">{panel.h}</h3>
@@ -170,27 +278,24 @@ export default function Inicio({ setTab }) {
         </a>
       </div>
 
-      {/* ── SECCIÓN 3: LO QUE HACEMOS ── */}
-      <section style={{ marginTop: 52 }}>
-        <div className="sec-hdr" style={{ marginBottom: 24 }}>
-
-          <h2 className="sec-h2">Tres pilares · <em>una sola empresa</em></h2>
+      {/* ── SECCIÓN 3: BENEFICIOS LITIO ── */}
+      <section className="beneficios-wrap">
+        <div className="sec-hdr" style={{ textAlign: "center", marginBottom: 36 }}>
+          <h2 className="sec-h2">Beneficios de la <em>Tecnología de Litio</em></h2>
         </div>
-        <div className="pilares-grid">
+        <div className="beneficios-grid" ref={benefGridRef}>
           {[
-            { num: "01", ic: "🔋", ti: "Baterías de Litio",    de: "Fabricación, reparación y venta. Li-Ion / LiFePO4.", tab: "productos" },
-            { num: "02", ic: "☀️", ti: "Energía Solar",        de: "Diseño, venta e instalación. Residencial a industrial.", tab: "asesoria" },
-            { num: "03", ic: "⚡", ti: "Vehículos Eléctricos", de: "Conversión a litio · 3× autonomía · garantía.", tab: "productos" },
-          ].map(p => (
-            <div key={p.ti} className="pilar-card">
-              <div className="pilar-body">
-                <div className="pilar-ic">{p.ic}</div>
-                <div>
-                  <div className="pilar-ti">{p.ti}</div>
-                  <div className="pilar-de">{p.de}</div>
-                  <button className="pilar-link" onClick={() => setTab(p.tab)}>Ver más →</button>
-                </div>
-              </div>
+            { icon: "⚡", ti: "Energía Continua y Confiable",                 de: "Elimina el riesgo de corte eléctrico, que afectaría la producción y/o las operaciones en áreas críticas." },
+            { icon: "🛡️", ti: "Protección para Equipos de Alta Sensibilidad", de: "Protección integrada frente a defectos y distorsiones de la red eléctrica, evitando el deterioro de los equipos." },
+            { icon: "💰", ti: "Reducción de Costos",                           de: "Ahorra en consumo y mantenimiento correctivo. No requiere equipos de protección o estabilización de la red eléctrica." },
+            { icon: "🌱", ti: "Energía Limpia y Eficiente",                    de: "Transición hacia soluciones basadas en energía limpia y eficiente, reduciendo el uso de combustibles fósiles." },
+            { icon: "📈", ti: "Escalabilidad y Flexibilidad",                  de: "Adapta sistemas modulares a cualquier etapa del proyecto, desde los pilotos hasta los proyectos de gran escala." },
+            { icon: "🔧", ti: "Respaldo Técnico con Garantía Certificada",     de: "Garantiza sistemas de almacenamiento con baterías certificadas y respaldo técnico especializado." },
+          ].map((b, i) => (
+            <div key={b.ti} className="beneficio-card reveal">
+              <div className="beneficio-ic">{b.icon}</div>
+              <div className="beneficio-ti">{b.ti}</div>
+              <p className="beneficio-de">{b.de}</p>
             </div>
           ))}
         </div>
@@ -205,17 +310,23 @@ export default function Inicio({ setTab }) {
             Trabajamos directo con <em>fábricas A1.</em>
           </h2>
 
-          <div className="aliados-grid">
-            {[
-              { src: "/partners/partner-eve.avif",     alt: "EVE Energy" },
-              { src: "/partners/partner-daly.webp",    alt: "Daly BMS" },
-              { src: "/partners/partner-h2.avif",      alt: "Partner H2" },
-              { src: "/partners/partner-sairifo.png",  alt: "SAIRIFO Solar" },
-            ].map(p => (
-              <div key={p.alt} className="aliado-logo">
-                <img src={p.src} alt={p.alt} loading="lazy" />
-              </div>
-            ))}
+          <div className="aliados-ticker">
+            <div className="aliados-track">
+              {[
+                { src: "/partners/partner-eve.avif",    alt: "EVE Energy" },
+                { src: "/partners/partner-daly.webp",   alt: "Daly BMS" },
+                { src: "/partners/partner-h2.avif",     alt: "Partner H2" },
+                { src: "/partners/partner-sairifo.png", alt: "SAIRIFO Solar" },
+                { src: "/partners/partner-eve.avif",    alt: "EVE Energy 2" },
+                { src: "/partners/partner-daly.webp",   alt: "Daly BMS 2" },
+                { src: "/partners/partner-h2.avif",     alt: "Partner H2 2" },
+                { src: "/partners/partner-sairifo.png", alt: "SAIRIFO Solar 2" },
+              ].map(p => (
+                <div key={p.alt} className="aliado-logo">
+                  <img src={p.src} alt={p.alt} loading="lazy" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
