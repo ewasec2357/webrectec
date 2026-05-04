@@ -306,7 +306,7 @@ export default function Inicio({ setTab }) {
         {/* Bloque izquierdo: Alianzas */}
         <div className="trust-left">
 
-          <h2 className="sec-h2" style={{ marginBottom: 6 }}>
+          <h2 className="sec-h2" style={{ marginBottom: 24 }}>
             Trabajamos directo con <em>fábricas A1.</em>
           </h2>
 

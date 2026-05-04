@@ -44,7 +44,7 @@ export default function MegaMenu({ data, setTab, tabId, onClose, onResetProduct,
         {/* ── Columna derecha: productos ── */}
         <div>
           <div className="mega-cats-label">{active.label}</div>
-          <div className="mega-products">
+          <div className="mega-products" key={activeId}>
             {active.items.map(item => (
               <div
                 key={item.id}

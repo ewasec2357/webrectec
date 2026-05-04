@@ -24,6 +24,8 @@ const MEGA_DATA = { productos: PRODUCTS, servicios: SERVICES };
 
 function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct, setSelectedService }) {
   const [megaOpen, setMegaOpen] = useState(null); // null | "productos" | "servicios"
+  const [megaClosing, setMegaClosing] = useState(false);
+  const megaKey = useRef(null);
   const [scrolled, setScrolled] = useState(false);
   const navRef = useRef(null);
   const closeTimer = useRef(null);
@@ -34,12 +36,18 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct, setSelect
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  function openMega(id)  {
+  function openMega(id) {
     clearTimeout(closeTimer.current);
+    setMegaClosing(false);
     setMegaOpen(id);
+    megaKey.current = id;
   }
   function closeMega() {
-    closeTimer.current = setTimeout(() => setMegaOpen(null), 120);
+    setMegaClosing(true);
+    closeTimer.current = setTimeout(() => {
+      setMegaOpen(null);
+      setMegaClosing(false);
+    }, 280);
   }
 
   return (
@@ -106,21 +114,21 @@ function Nav({ tab, setTab, menuOpen, setMenuOpen, setSelectedProduct, setSelect
       </div>
 
       {/* Mega panel — fuera del nav-wrap para no afectar el flex layout */}
-      {megaOpen && MEGA_DATA[megaOpen] && (
+      {(megaOpen || megaClosing) && MEGA_DATA[megaKey.current] && (
         <div
-          className="mega-panel-wrap"
-          onMouseEnter={() => openMega(megaOpen)}
+          className={`mega-panel-wrap${megaClosing ? " mega-closing" : ""}`}
+          onMouseEnter={() => megaOpen && openMega(megaOpen)}
           onMouseLeave={closeMega}
         >
           <MegaMenu
-            data={MEGA_DATA[megaOpen]}
-            tabId={megaOpen}
+            data={MEGA_DATA[megaKey.current]}
+            tabId={megaKey.current}
             setTab={setTab}
-            onClose={() => setMegaOpen(null)}
+            onClose={() => { setMegaOpen(null); setMegaClosing(false); }}
             onResetProduct={() => { setSelectedProduct(null); setSelectedService(null); }}
             onSelectItem={(item) => {
-              if (megaOpen === "productos") { setSelectedProduct(item); setSelectedService(null); }
-              if (megaOpen === "servicios") { setSelectedService(item); setSelectedProduct(null); }
+              if (megaKey.current === "productos") { setSelectedProduct(item); setSelectedService(null); }
+              if (megaKey.current === "servicios") { setSelectedService(item); setSelectedProduct(null); }
             }}
           />
         </div>
@@ -217,11 +225,13 @@ export default function App() {
   const [selectedService, setSelectedService] = useState(null);
 
   const handleSplashDone = useCallback(() => setSplashDone(true), []);
+  const _preloaded = useRef([]);
 
   useEffect(() => {
-    [...PRODUCTS, ...SERVICES].flatMap(c => c.items).forEach(item => {
-      if (item.img) new Image().src = item.img;
-    });
+    _preloaded.current = [...PRODUCTS, ...SERVICES]
+      .flatMap(c => c.items)
+      .filter(item => item.img)
+      .map(item => { const img = new Image(); img.src = item.img; return img; });
   }, []);
 
   useEffect(() => {
