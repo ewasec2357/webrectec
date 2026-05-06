@@ -1,6 +1,8 @@
-import { useState, useCallback, useEffect, useRef } from "react"; // legal pages added
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./styles.css";
 import { TABS, PRODUCTS, SERVICES, wm, COMPANY } from "./constants.js";
+import { loadGA, pageview } from "./analytics.js";
 import { WaIcon, CompanyLogo } from "./components/Icons.jsx";
 import Splash      from "./components/Splash.jsx";
 import MegaMenu    from "./components/MegaMenu.jsx";
@@ -15,6 +17,7 @@ import Privacidad          from "./pages/Privacidad.jsx";
 import Terminos            from "./pages/Terminos.jsx";
 import Cookies             from "./pages/Cookies.jsx";
 import LibroReclamaciones  from "./pages/LibroReclamaciones.jsx";
+import NotFound            from "./pages/NotFound.jsx";
 import CookieBanner        from "./components/CookieBanner.jsx";
 import BottomNav           from "./components/BottomNav.jsx";
 
@@ -217,12 +220,71 @@ function Footer({ setTab }) {
   );
 }
 
+const PAGE_TITLES = {
+  inicio:        "Recursos Tecnológicos S.A.C. | Baterías de Litio y Energía Solar Lima Perú",
+  productos:     "Productos | Baterías LiFePO4, Solar y Celdas · Recursos Tecnológicos",
+  servicios:     "Servicios | Fabricación y Reparación de Baterías · Recursos Tecnológicos",
+  asesoria:      "Asesoría Solar | Proyectos Fotovoltaicos en Lima · Recursos Tecnológicos",
+  nosotros:      "Nosotros | Ingenieros Certificados en Lima · Recursos Tecnológicos",
+  contacto:      "Contacto | Recursos Tecnológicos S.A.C. Lima Perú",
+  privacidad:    "Política de Privacidad | Recursos Tecnológicos S.A.C.",
+  terminos:      "Términos y Condiciones | Recursos Tecnológicos S.A.C.",
+  cookies:       "Política de Cookies | Recursos Tecnológicos S.A.C.",
+  reclamaciones: "Libro de Reclamaciones | Recursos Tecnológicos S.A.C.",
+  "404":         "Página no encontrada | Recursos Tecnológicos S.A.C.",
+};
+
+const PAGE_DESCRIPTIONS = {
+  inicio:        "Fabricación y reparación de baterías de litio para vehículos eléctricos. Sistemas de energía solar: paneles, inversores, MPPT. Ingenieros certificados en Chorrillos, Lima, Perú.",
+  productos:     "Catálogo completo: baterías LiFePO4, celdas 18650/21700/prismáticas, paneles solares SAIRIFO, inversores híbridos TechFine y materiales de fabricación. Lima, Perú.",
+  servicios:     "Fabricación de packs de batería a medida, reparación de baterías, reemplazo de BMS y conversión plomo-ácido a litio. Ingenieros certificados en Lima, Perú.",
+  asesoria:      "Asesoría en proyectos solares residenciales, comerciales e industriales en Lima. Diseño, cálculo de ROI y acompañamiento hasta la puesta en marcha.",
+  nosotros:      "Ingenieros certificados especializados en baterías de litio, vehículos eléctricos y energía solar. Más de 5 años de experiencia en Lima, Perú.",
+  contacto:      "Contáctanos para cotizar baterías de litio, sistemas solares o reparación. Respondemos en menos de 2 horas. Av. Alameda Sur 547, Chorrillos, Lima.",
+  privacidad:    "Política de Privacidad de Recursos Tecnológicos S.A.C. Tratamiento de datos personales conforme a la Ley 29733 del Perú.",
+  terminos:      "Términos y Condiciones de Recursos Tecnológicos S.A.C. Condiciones de compra, garantía y uso de productos y servicios.",
+  cookies:       "Política de Cookies de Recursos Tecnológicos S.A.C. Información sobre cookies de analítica y funcionales en nuestro sitio web.",
+  reclamaciones: "Libro de Reclamaciones virtual conforme al D.S. N° 011-2011-PCM. Registra tu reclamo o queja. Respuesta en 30 días hábiles.",
+};
+
+const VALID_TABS = new Set(["inicio","productos","servicios","asesoria","nosotros","contacto","privacidad","terminos","cookies","reclamaciones"]);
+
 export default function App() {
-  const [tab, setTab]                       = useState("inicio");
-  const [menuOpen, setMenuOpen]             = useState(false);
-  const [splashDone, setSplashDone]         = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [selectedService, setSelectedService] = useState(null);
+  const navigate   = useNavigate();
+  const location   = useLocation();
+  const [menuOpen, setMenuOpen]     = useState(false);
+  const [splashDone, setSplashDone] = useState(false);
+
+  const [seg0, seg1] = (location.pathname.replace(/^\//, "") || "").split("/");
+
+  const tab = useMemo(() => {
+    if (!seg0) return "inicio";
+    return VALID_TABS.has(seg0) ? seg0 : "404";
+  }, [seg0]);
+
+  const selectedProduct = useMemo(() =>
+    seg0 === "productos" && seg1
+      ? PRODUCTS.flatMap(c => c.items).find(i => i.id === seg1) ?? null
+      : null,
+  [seg0, seg1]);
+
+  const selectedService = useMemo(() =>
+    seg0 === "servicios" && seg1
+      ? SERVICES.flatMap(c => c.items).find(i => i.id === seg1) ?? null
+      : null,
+  [seg0, seg1]);
+
+  const setTab = useCallback((id) => {
+    navigate(id === "inicio" ? "/" : `/${id}`);
+  }, [navigate]);
+
+  const setSelectedProduct = useCallback((item) => {
+    if (item) navigate(`/productos/${item.id}`);
+  }, [navigate]);
+
+  const setSelectedService = useCallback((item) => {
+    if (item) navigate(`/servicios/${item.id}`);
+  }, [navigate]);
 
   const handleSplashDone = useCallback(() => setSplashDone(true), []);
   const _preloaded = useRef([]);
@@ -235,8 +297,23 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (localStorage.getItem("rt_cookie_consent") === "all") loadGA();
+  }, []);
+
+  useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
-  }, [tab]);
+    const item = selectedProduct || selectedService;
+    document.title = item
+      ? `${item.name} | Recursos Tecnológicos S.A.C.`
+      : (PAGE_TITLES[tab] ?? PAGE_TITLES.inicio);
+    const descEl = document.querySelector('meta[name="description"]');
+    if (descEl) descEl.setAttribute("content", item?.desc
+      ? item.desc.slice(0, 155) + (item.desc.length > 155 ? "..." : "")
+      : (PAGE_DESCRIPTIONS[tab] ?? PAGE_DESCRIPTIONS.inicio));
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.setAttribute("href", `https://www.recursostecnologicos.com${location.pathname === "/" ? "" : location.pathname}`);
+    pageview(location.pathname || "/");
+  }, [location.pathname]);
 
 
   const anim = {
@@ -259,6 +336,7 @@ export default function App() {
     terminos:            <Terminos  setTab={setTab} />,
     cookies:             <Cookies   setTab={setTab} />,
     reclamaciones:       <LibroReclamaciones />,
+    "404":               <NotFound setTab={setTab} />,
   };
 
   return (
@@ -286,11 +364,7 @@ export default function App() {
         {((tab === "productos" && selectedProduct) || (tab === "servicios" && selectedService)) && (
           <button
             className="prod-back"
-            onClick={() => {
-              setSelectedProduct(null);
-              setSelectedService(null);
-              window.scrollTo({ top: 0, behavior: "instant" });
-            }}
+            onClick={() => navigate(`/${tab}`)}
           >
             ← Retroceder
           </button>

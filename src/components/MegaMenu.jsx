@@ -17,9 +17,7 @@ export default function MegaMenu({ data, setTab, tabId, onClose, onResetProduct,
 
   function goItem(item) {
     if (onSelectItem) onSelectItem(item);
-    setTab(tabId);
     onClose();
-    window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   return (

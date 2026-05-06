@@ -61,9 +61,16 @@ export default function Contacto() {
   const [nombre,   setNombre]   = useState("");
   const [servicio, setServicio] = useState("");
   const [detalle,  setDetalle]  = useState("");
+  const [errors,   setErrors]   = useState({});
 
   const send = () => {
-    const msg = `Hola, soy ${nombre || "Cliente"}. Necesito: ${servicio || "consulta"}. ${detalle}`;
+    const e = {};
+    if (!nombre.trim())            e.nombre   = "Ingresa tu nombre";
+    if (!servicio)                 e.servicio  = "Selecciona un servicio";
+    if (detalle.trim().length < 5) e.detalle   = "Describe tu caso (mínimo 5 caracteres)";
+    setErrors(e);
+    if (Object.keys(e).length) return;
+    const msg = `Hola, soy ${nombre}. Necesito: ${servicio}. ${detalle}`;
     window.open(wm(msg), "_blank");
   };
 
@@ -84,11 +91,12 @@ export default function Contacto() {
 
           <div className="fg">
             <label>Nombre completo</label>
-            <input type="text" placeholder="Tu nombre" value={nombre} onChange={e => setNombre(e.target.value)} />
+            <input type="text" placeholder="Tu nombre" value={nombre} onChange={e => { setNombre(e.target.value); setErrors(x => ({ ...x, nombre: "" })); }} />
+            {errors.nombre && <span className="fg-error">{errors.nombre}</span>}
           </div>
           <div className="fg">
             <label>Servicio que necesitas</label>
-            <select value={servicio} onChange={e => setServicio(e.target.value)}>
+            <select value={servicio} onChange={e => { setServicio(e.target.value); setErrors(x => ({ ...x, servicio: "" })); }}>
               <option value="">Selecciona un servicio...</option>
               {[
                 "Fabricación de batería de litio",
@@ -103,14 +111,16 @@ export default function Contacto() {
                 "Otro",
               ].map(o => <option key={o} value={o}>{o}</option>)}
             </select>
+            {errors.servicio && <span className="fg-error">{errors.servicio}</span>}
           </div>
           <div className="fg">
             <label>Detalla tu caso</label>
             <textarea
               placeholder="Ej: Tengo moto 60V, batería no carga bien. O: quiero sistema solar para mi empresa con consumo de 500kWh/mes..."
               value={detalle}
-              onChange={e => setDetalle(e.target.value)}
+              onChange={e => { setDetalle(e.target.value); setErrors(x => ({ ...x, detalle: "" })); }}
             />
+            {errors.detalle && <span className="fg-error">{errors.detalle}</span>}
           </div>
           <button className="btn-submit" onClick={send}>Enviar por WhatsApp ↗</button>
         </div>

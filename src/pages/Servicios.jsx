@@ -3,7 +3,7 @@ import { SERVICES, wm } from "../constants.js";
 import { WaIcon } from "../components/Icons.jsx";
 
 /* ── Carrusel de imágenes ── */
-function Carousel({ images, badge }) {
+function Carousel({ images, badge, name }) {
   const [idx, setIdx]       = useState(0);
   const [loaded, setLoaded] = useState(false);
   const timerRef = useRef(null);
@@ -31,7 +31,7 @@ function Carousel({ images, badge }) {
       {!loaded && <div className="car-skeleton" />}
       <img
         src={images[idx]}
-        alt=""
+        alt={name}
         onLoad={() => setLoaded(true)}
         style={{ opacity: loaded ? 1 : 0 }}
       />
@@ -104,7 +104,7 @@ function ServiceDetail({ item }) {
               </div>
             )
             : item.images
-              ? <Carousel images={item.images} badge={item.badge} />
+              ? <Carousel images={item.images} badge={item.badge} name={item.name} />
               : <><img src={item.imgL} alt={item.name} /><span className="prod-badge">{item.badge}</span></>
           }
         </div>

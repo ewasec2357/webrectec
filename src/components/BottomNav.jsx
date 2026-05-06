@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { CompanyLogo } from "./Icons.jsx";
 import { PRODUCTS, SERVICES } from "../constants.js";
 
@@ -39,6 +39,19 @@ const LIT  = "#ffffff";
 export default function BottomNav({ tab, setTab, setSelectedProduct, setSelectedService }) {
   const [drawerOpen, setDrawerOpen]         = useState(false);
   const [activeCategory, setActiveCategory] = useState(null); // { cat, type } | null
+  const itemsSectionRef = useRef(null);
+  const inTimer = useRef(null);
+
+  useEffect(() => {
+    clearTimeout(inTimer.current);
+    if (!activeCategory) return;
+    inTimer.current = setTimeout(() => {
+      itemsSectionRef.current
+        ?.querySelectorAll(".bnav-drawer-item--product")
+        .forEach((el, i) => { el.style.setProperty("--i", i); el.classList.add("in"); });
+    }, 30);
+    return () => clearTimeout(inTimer.current);
+  }, [activeCategory]);
 
   const catalogoActive = tab === "productos" || tab === "servicios" || drawerOpen;
   const asesoriaActive = tab === "asesoria"  && !drawerOpen;
@@ -58,15 +71,8 @@ export default function BottomNav({ tab, setTab, setSelectedProduct, setSelected
   }
 
   function selectItem(item, type) {
-    if (type === "productos") {
-      setSelectedProduct(item);
-      setSelectedService(null);
-      setTab("productos");
-    } else {
-      setSelectedService(item);
-      setSelectedProduct(null);
-      setTab("servicios");
-    }
+    if (type === "productos") setSelectedProduct(item);
+    else setSelectedService(item);
     closeDrawer();
   }
 
@@ -133,7 +139,7 @@ export default function BottomNav({ tab, setTab, setSelectedProduct, setSelected
 
         {/* Nivel 1 — ítems de la categoría seleccionada */}
         {activeCategory && (
-          <div className="bnav-drawer-section">
+          <div className="bnav-drawer-section" ref={itemsSectionRef}>
             {activeCategory.cat.items.map(item => (
               <button
                 key={item.id}

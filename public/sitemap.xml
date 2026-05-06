@@ -1,9 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://www.recursostecnologicos.com</loc>
-    <lastmod>2026-04-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
+
+  <!-- Páginas principales -->
+  <url><loc>https://www.recursostecnologicos.com/</loc><lastmod>2026-05-05</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos</loc><lastmod>2026-05-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/servicios</loc><lastmod>2026-05-05</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/asesoria</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/nosotros</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/contacto</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Productos individuales -->
+  <url><loc>https://www.recursostecnologicos.com/productos/bateria-sellada</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/wall-battery</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/bateria-movil</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/bateria-movil-mini</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/paneles</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/inversores</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/dally-bms</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/tdt-bms</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/18650</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/21700</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/33140</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/prismatica</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/barley-paper</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/barley-rings</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/cinta-fibra-vidrio</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/cinta-high-temp</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/conectores-xt60</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/holders</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/indicadores-voltaje</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/nickel-plated</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/productos/pvc-termocontraible</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Servicios individuales -->
+  <url><loc>https://www.recursostecnologicos.com/servicios/fab-pack</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/servicios/soldadura-punto</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/servicios/fab-conversion</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/servicios/rep-bateria</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/servicios/rep-bms</loc><lastmod>2026-05-05</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Páginas legales -->
+  <url><loc>https://www.recursostecnologicos.com/privacidad</loc><lastmod>2026-05-05</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/terminos</loc><lastmod>2026-05-05</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/cookies</loc><lastmod>2026-05-05</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.recursostecnologicos.com/reclamaciones</loc><lastmod>2026-05-05</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+
 </urlset>

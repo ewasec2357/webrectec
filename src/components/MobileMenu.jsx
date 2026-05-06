@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { TABS, PRODUCTS, SERVICES, wm } from "../constants.js";
 import { WaIcon, CompanyLogo } from "./Icons.jsx";
 
@@ -9,10 +9,24 @@ export default function MobileMenu({ tab, setTab, open, onClose, setSelectedProd
   const [activeMega, setActiveMega]   = useState(null);
   const [activeCat, setActiveCat]     = useState(null);
   const [renderedCat, setRenderedCat] = useState(null);
-  const slideTimer = useRef(null);
+  const slideTimer    = useRef(null);
+  const inTimer       = useRef(null);
+  const containerRef  = useRef(null);
+
+  useEffect(() => {
+    clearTimeout(inTimer.current);
+    if (!renderedCat) return;
+    inTimer.current = setTimeout(() => {
+      containerRef.current
+        ?.querySelectorAll(".mmenu-item")
+        .forEach(el => el.classList.add("in"));
+    }, 50);
+    return () => clearTimeout(inTimer.current);
+  }, [renderedCat]);
 
   function resetAll() {
     clearTimeout(slideTimer.current);
+    clearTimeout(inTimer.current);
     setPanel(0); setActiveMega(null); setActiveCat(null); setRenderedCat(null);
   }
 
@@ -25,6 +39,7 @@ export default function MobileMenu({ tab, setTab, open, onClose, setSelectedProd
 
   function openCat(catId) {
     clearTimeout(slideTimer.current);
+    clearTimeout(inTimer.current);
     setRenderedCat(null);
     setActiveCat(catId);
     setPanel(2);
@@ -33,16 +48,16 @@ export default function MobileMenu({ tab, setTab, open, onClose, setSelectedProd
 
   function goBack() {
     clearTimeout(slideTimer.current);
-    const next = panel - 1;
-    if (next < 2) setRenderedCat(null);
-    setPanel(next);
+    clearTimeout(inTimer.current);
+    setRenderedCat(null);
+    setPanel(p => Math.max(0, p - 1));
   }
 
   function goItem(itemId) {
     const item = (MEGA_DATA[activeMega] ?? []).flatMap(c => c.items).find(i => i.id === itemId);
-    if (activeMega === "productos" && item) { setSelectedProduct?.(item); setSelectedService?.(null); }
-    if (activeMega === "servicios" && item) { setSelectedService?.(item); setSelectedProduct?.(null); }
-    setTab(activeMega); onClose(); resetAll();
+    if (activeMega === "productos" && item) setSelectedProduct?.(item);
+    if (activeMega === "servicios" && item) setSelectedService?.(item);
+    onClose(); resetAll();
   }
 
   const cats       = activeMega ? (MEGA_DATA[activeMega] ?? []) : [];
@@ -107,9 +122,14 @@ export default function MobileMenu({ tab, setTab, open, onClose, setSelectedProd
             </div>
 
             <div className="mmenu-panel mmenu-panel--dark">
-              <div className="mmenu-items">
+              <div className="mmenu-items" ref={containerRef}>
                 {renderedCat && currentCat?.items.map((item, i) => (
-                  <button key={item.id} className="mmenu-item" style={{ animationDelay: `${i * 60}ms` }} onClick={() => goItem(item.id)}>
+                  <button
+                    key={item.id}
+                    className="mmenu-item"
+                    style={{ "--i": i }}
+                    onClick={() => goItem(item.id)}
+                  >
                     {item.img && <img src={item.img} alt={item.name} className="mmenu-item-img" />}
                     <div className="mmenu-item-txt">
                       <span className="mmenu-item-name">{item.name}</span>

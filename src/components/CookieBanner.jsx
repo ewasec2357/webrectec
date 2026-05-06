@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { loadGA } from "../analytics.js";
 
 export default function CookieBanner({ setTab }) {
   const [visible, setVisible] = useState(false);
@@ -10,6 +11,7 @@ export default function CookieBanner({ setTab }) {
 
   const accept = () => {
     localStorage.setItem("rt_cookie_consent", "all");
+    loadGA();
     setVisible(false);
   };
 

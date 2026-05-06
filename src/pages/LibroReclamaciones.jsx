@@ -7,10 +7,20 @@ export default function LibroReclamaciones() {
     tipo: "Reclamo", producto: "", descripcion: "",
   });
   const [enviado, setEnviado] = useState(false);
+  const [errors, setErrors]   = useState({});
 
-  const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
+  const set = (k) => (e) => {
+    setForm(f => ({ ...f, [k]: e.target.value }));
+    setErrors(x => ({ ...x, [k]: "" }));
+  };
 
   const send = () => {
+    const e = {};
+    if (!form.nombre.trim())               e.nombre      = "Ingresa tu nombre completo";
+    if (!form.dni.trim())                  e.dni         = "Ingresa tu DNI o RUC";
+    if (form.descripcion.trim().length < 5) e.descripcion = "Describe la reclamación";
+    setErrors(e);
+    if (Object.keys(e).length) return;
     const msg =
       `📋 *LIBRO DE RECLAMACIONES*\n` +
       `*Tipo:* ${form.tipo}\n` +
@@ -23,8 +33,6 @@ export default function LibroReclamaciones() {
     window.open(wm(msg), "_blank");
     setEnviado(true);
   };
-
-  const valido = form.nombre && form.dni && form.descripcion;
 
   return (
     <div className="legal-page fade">
@@ -86,10 +94,12 @@ export default function LibroReclamaciones() {
               <div className="fg">
                 <label>Nombre completo *</label>
                 <input type="text" placeholder="Nombres y apellidos" value={form.nombre} onChange={set("nombre")} />
+                {errors.nombre && <span className="fg-error">{errors.nombre}</span>}
               </div>
               <div className="fg">
                 <label>DNI / RUC *</label>
                 <input type="text" placeholder="Número de documento" value={form.dni} onChange={set("dni")} />
+                {errors.dni && <span className="fg-error">{errors.dni}</span>}
               </div>
               <div className="fg">
                 <label>Email</label>
@@ -131,6 +141,7 @@ export default function LibroReclamaciones() {
                 onChange={set("descripcion")}
                 rows={5}
               />
+              {errors.descripcion && <span className="fg-error">{errors.descripcion}</span>}
             </div>
 
             <div className="lr-aviso">
@@ -139,7 +150,7 @@ export default function LibroReclamaciones() {
               D.S. N° 011-2011-PCM. La respuesta se brindará en un plazo máximo de 30 días hábiles.
             </div>
 
-            <button className="btn-submit" onClick={send} disabled={!valido} style={{ opacity: valido ? 1 : .5 }}>
+            <button className="btn-submit" onClick={send}>
               Enviar {form.tipo} por WhatsApp ↗
             </button>
           </div>
